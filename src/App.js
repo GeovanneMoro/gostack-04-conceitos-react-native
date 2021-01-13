@@ -42,6 +42,12 @@ export default function App() {
     setRepositories([...repositories, newRepository]);
   }
 
+  async function handleDeleteRepository(id) {
+    await api.delete(`repositories/${id}`);
+
+    setRepositories(repositories.filter((repository) => repository.id !== id));
+  }
+
   return (
     <>
       <StatusBar barStyle="light-content" backgroundColor="#7159c1" />
@@ -70,15 +76,23 @@ export default function App() {
                     : `${repository.likes} curtida`}
                 </Text>
               </View>
+              <View style={styles.buttons}>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => handleLikeRepository(repository.id)}
+                  // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
+                  testID={`like-button-${repository.id}`}
+                >
+                  <Text style={styles.buttonText}>Curtir</Text>
+                </TouchableOpacity>
 
-              <TouchableOpacity
-                style={styles.button}
-                onPress={() => handleLikeRepository(repository.id)}
-                // Remember to replace "1" below with repository ID: {`like-button-${repository.id}`}
-                testID={`like-button-${repository.id}`}
-              >
-                <Text style={styles.buttonText}>Curtir</Text>
-              </TouchableOpacity>
+                <TouchableOpacity
+                  style={styles.button}
+                  onPress={() => handleDeleteRepository(repository.id)}
+                >
+                  <Text style={styles.buttonText}>Deletar</Text>
+                </TouchableOpacity>
+              </View>
             </View>
           )}
         />
@@ -94,6 +108,9 @@ export default function App() {
 }
 
 const styles = StyleSheet.create({
+  buttons: {
+    flexDirection: 'row',
+  },
   container: {
     flex: 1,
     backgroundColor: '#7159c1',
@@ -133,15 +150,17 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   button: {
+    width: 100,
     marginTop: 10,
+    marginRight: 10,
     borderRadius: 5,
     backgroundColor: '#7159c1',
+    alignItems: 'center',
   },
   buttonText: {
     borderRadius: 4,
     fontSize: 14,
     fontWeight: 'bold',
-    marginRight: 10,
     color: '#fff',
     padding: 15,
   },
